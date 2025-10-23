@@ -25,8 +25,8 @@ vim.keymap.set("n", "<Leader>fb", ':Telescope file_browser<CR>')
 vim.keymap.set('n', '<Leader>se', ':Telescope current_buffer_fuzzy_find<CR>')
 
 -- terminal
-vim.keymap.set('n', '<Leader>tv', ':vsp term://fish<CR>')
-vim.keymap.set('n', '<Leader>ts', ':split term://fish<CR>')
+vim.keymap.set('n', '<Leader>tv', ':vsp term://zsh<CR>')
+vim.keymap.set('n', '<Leader>ts', ':split term://zsh<CR>')
 
 -- diagnostic
 vim.keymap.set('n', '<Leader>sd', '<cmd>lua vim.diagnostic.open_float()<CR>',

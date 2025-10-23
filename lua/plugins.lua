@@ -67,7 +67,7 @@ require("lazy").setup({
     },
 
     {
-        'shaunsingh/nord.nvim',
+        'folke/tokyonight.nvim',
         lazy = false,
         priority = 1000
     },
@@ -91,12 +91,6 @@ require("lazy").setup({
             "nvim-telescope/telescope.nvim",
             "nvim-lua/plenary.nvim"
         }
-    },
-
-    {
-        'nvim-orgmode/orgmode',
-        event = 'VeryLazy',
-        ft = {'org'}
     },
 
     "dhruvasagar/vim-table-mode",
@@ -239,18 +233,14 @@ require("lazy").setup({
         "3rd/image.nvim",
         build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
         opts = {
-            backend = "sixel",
+            backend = "kitty",
             processor = "magick_cli",
         }
     },
 
     {
-        "zk-org/zk-nvim",
-        config = function()
-            require("zk").setup({
-                picker = "telescope"
-            })
-        end
-    }
+        "goolord/alpha-nvim",
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+    },
 
 })

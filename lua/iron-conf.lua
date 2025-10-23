@@ -10,10 +10,10 @@ iron.setup {
             sh = {
                 -- Can be a table or a function that
                 -- returns a table (see below)
-                command = {"bash"}
+                command = {"zsh"}
             },
             python = {
-                command = {"ipython", "--no-autoindent"},
+                command = {"python"},
                 format = require("iron.fts.common").bracketed_paste_python
             }
         },
