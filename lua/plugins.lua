@@ -259,5 +259,33 @@ require("lazy").setup({
          vim.g.vimtex_view_method = "zathura"
      end
     },
+    {
+        "L3MON4D3/LuaSnip",
+        event = "VeryLazy",
+        config = function()
+        local ls = require("luasnip")
+        require("luasnip.loaders.from_lua").lazy_load({
+            paths = { vim.fn.stdpath("config") .. "/luasnip" },
+        })
+    end
+    },
+
+    {
+        "chomosuke/typst-preview.nvim",
+        ft = "typst",
+        version = "1.*",
+        opts = {
+            debug = true, 
+            port = 56051,
+            open_cmd = "open %s",
+            -- If you use kitty and want a dedicated window, uncomment and tweak:
+            -- open_cmd = "kitten @ --to unix:/tmp/mykitty launch --type window --title TypstPreview --dont-take-focus awrit %s",
+            extra_args = { "--input=preview=true" },
+            get_root = function(_)
+                -- Use the buffer's directory as project root so relative resources resolve
+                return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
+            end,        
+        },
+    },
 
 })
