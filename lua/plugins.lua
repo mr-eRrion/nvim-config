@@ -15,6 +15,13 @@ require("lazy").setup({
         config = function() require('lualine').setup() end
     },
 
+    {
+        "let-def/texpresso.vim",
+        config = function() 
+            require('texpresso').texpresso_path = "/Users/errion/texpresso/build/texpresso"
+        end
+    },
+
     "neovim/nvim-lspconfig",
 
     "hrsh7th/cmp-nvim-lsp",
@@ -241,6 +248,16 @@ require("lazy").setup({
     {
         "goolord/alpha-nvim",
         dependencies = { 'nvim-tree/nvim-web-devicons' },
+    },
+
+    {
+        "lervag/vimtex",
+        lazy = false,     -- we don't want to lazy load VimTeX
+        -- tag = "v2.15", -- uncomment to pin to a specific release
+        init = function()
+        -- VimTeX configuration goes here, e.g.
+         vim.g.vimtex_view_method = "zathura"
+     end
     },
 
 })
