@@ -1,10 +1,10 @@
-local dap, dapui = require("dap"), require("dapui")
+local dap = require("dap")
+local dapui = require("dapui")
 
 -- dap
 
 -- python dap
 
-local dap = require('dap')
 dap.adapters.python = function(cb, config)
     if config.request == 'attach' then
         ---@diagnostic disable-next-line: undefined-field
@@ -29,7 +29,6 @@ dap.adapters.python = function(cb, config)
     end
 end
 
-local dap = require('dap')
 dap.configurations.python = {
     {
         -- The first three options are required by nvim-dap

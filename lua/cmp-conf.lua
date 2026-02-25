@@ -1,5 +1,5 @@
+local unpack = table.unpack or unpack
 local has_words_before = function()
-    unpack = unpack or table.unpack
     local line, col = unpack(vim.api.nvim_win_get_cursor(0))
     return col ~= 0 and
                vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col,
@@ -43,17 +43,18 @@ cmp.setup({
             else
                 fallback()
             end
-        end, {"i", "s"})
+        end, {"i", "s"}),
 
-        -- ["<S-Tab>"] = cmp.mapping(function(fallback)
-        --   if cmp.visible() then
-        --     cmp.select_prev_item()
-        --   elseif luasnip.jumpable(-1) then
-        --     luasnip.jump(-1)
-        --   else
-        --     fallback()
-        --   end
-        -- end, { "i", "s" }),
+        -- Robust Shift-Tab behavior: select previous item if menu visible, otherwise jump back in snippet, otherwise fallback.
+        ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, {"i", "s"}),
 
     }),
     sources = cmp.config.sources({
@@ -61,7 +62,6 @@ cmp.setup({
         {name = 'luasnip'}, -- For luasnip users.
         -- { name = 'ultisnips' }, -- For ultisnips users.
         -- { name = 'snippy' }, -- For snippy users.
-        {name = 'orgmode'}
     }, {{name = 'buffer'}})
 })
 

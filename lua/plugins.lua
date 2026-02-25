@@ -2,145 +2,235 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     vim.fn.system({
         "git", "clone", "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git", "--branch=stable", -- latest stable release
+        "https://github.com/folke/lazy.nvim.git", "--branch=stable",
         lazypath
     })
 end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+    {
+        "folke/tokyonight.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require("colorscheme")
+        end
+    },
 
     {
         "lewis6991/gitsigns.nvim",
-        config = function() require('lualine').setup() end
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            require("gitsigns-conf")
+        end
     },
 
     {
         "let-def/texpresso.vim",
-        config = function() 
-            require('texpresso').texpresso_path = "/Users/errion/texpresso/build/texpresso"
+        ft = { "tex" },
+        config = function()
+            require("texpresso-conf")
         end
-    },
-
-    "neovim/nvim-lspconfig",
-
-    "hrsh7th/cmp-nvim-lsp",
-    "hrsh7th/cmp-buffer",
-    "hrsh7th/cmp-path",
-    "hrsh7th/cmp-cmdline",
-    "hrsh7th/nvim-cmp", -- auto completion
-
-    {
-        "L3MON4D3/LuaSnip",
-        version = "v2.*"
     },
 
     {
         "nvim-tree/nvim-tree.lua",
-        version = "*",
-        lazy = false,
-        dependencies = {"nvim-tree/nvim-web-devicons"},
-        config = function() require("nvim-tree").setup {} end
+        cmd = { "NvimTreeToggle", "NvimTreeOpen", "NvimTreeFindFile" },
+        keys = {
+            { "<Leader>ls", "<cmd>NvimTreeToggle<cr>", desc = "NvimTree Toggle" }
+        },
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("nvim-tree-conf")
+        end
     },
 
     {
-        'akinsho/bufferline.nvim',
-        version = "*",
-        dependencies = 'nvim-tree/nvim-web-devicons'
+        "akinsho/bufferline.nvim",
+        event = "VeryLazy",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("bufferline-conf")
+        end
     },
 
     {
-        'nvim-lualine/lualine.nvim',
-        dependencies = {'nvim-tree/nvim-web-devicons'}
+        "nvim-lualine/lualine.nvim",
+        event = "VeryLazy",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("lualine-conf")
+        end
     },
 
     {
         "williamboman/mason.nvim",
-        config = function() require("mason").setup() end
+        cmd = "Mason",
+        config = true
+    },
+
+    {
+        "neovim/nvim-lspconfig",
+        event = { "BufReadPre", "BufNewFile" }
     },
 
     {
         "williamboman/mason-lspconfig.nvim",
-        config = function()
-            require("mason-lspconfig").setup({automatic_enable = true})
-        end
-    },
-
-    "mhartington/formatter.nvim",
-
-    {
-        'nvim-telescope/telescope-project.nvim',
-        dependencies = {'nvim-telescope/telescope.nvim'}
-    },
-
-    {
-        'folke/tokyonight.nvim',
-        lazy = false,
-        priority = 1000
-    },
-
-    "github/copilot.vim",
-
-    {
-        'nvim-telescope/telescope.nvim',
-        branch = '0.1.x',
-        dependencies = {'nvim-lua/plenary.nvim'},
-        config = function()
-            require('telescope').load_extension('project')
-            require("telescope").load_extension('file_browser')
-        end
-    },
-
-
-    {
-        "nvim-telescope/telescope-file-browser.nvim",
+        event = { "BufReadPre", "BufNewFile" },
         dependencies = {
-            "nvim-telescope/telescope.nvim",
-            "nvim-lua/plenary.nvim"
-        }
+            "williamboman/mason.nvim",
+            "neovim/nvim-lspconfig",
+            "hrsh7th/cmp-nvim-lsp"
+        },
+        opts = {
+            automatic_installation = true,
+            ensure_installed = { "tinymist" },
+            server_settings = {
+                tinymist = {},
+            },
+        },
+        config = function(_, opts)
+            require("lsp-conf").setup(opts)
+        end
     },
 
-    "dhruvasagar/vim-table-mode",
+    {
+        "hrsh7th/nvim-cmp",
+        event = "InsertEnter",
+        dependencies = {
+            "L3MON4D3/LuaSnip",
+            "saadparwaiz1/cmp_luasnip",
+            "hrsh7th/cmp-nvim-lsp",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-cmdline"
+        },
+        config = function()
+            require("cmp-conf")
+        end
+    },
+
+	    {
+	        "L3MON4D3/LuaSnip",
+	        version = "v2.*",
+	        event = "InsertEnter",
+	        dependencies = {
+	            { "iurimateus/luasnip-latex-snippets.nvim", ft = { "tex", "plaintex", "latex", "markdown" } }
+	        },
+	        config = function()
+	            require("luasnip-conf")
+	        end
+	    },
+
+    {
+        "mhartington/formatter.nvim",
+        cmd = { "Format", "FormatWrite", "FormatLock", "FormatWriteLock" },
+        keys = {
+            { "<Leader>fm", "<cmd>Format<cr>", desc = "Format" },
+            { "<Leader>fw", "<cmd>FormatWrite<cr>", desc = "Format Write" }
+        },
+        config = function()
+            require("fmt-conf")
+        end
+    },
+
+    {
+        "nvim-telescope/telescope.nvim",
+        branch = "0.1.x",
+        cmd = "Telescope",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-telescope/telescope-project.nvim",
+            "nvim-telescope/telescope-file-browser.nvim"
+        },
+        keys = {
+            { "<Leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+            { "<Leader>fp", "<cmd>Telescope project<cr>", desc = "Projects" },
+            { "<Leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
+            { "<Leader>fs", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
+            { "<Leader>fb", "<cmd>Telescope file_browser<cr>", desc = "File Browser" },
+            { "<Leader>se", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Buffer Search" }
+        },
+        config = function()
+            require("telescope-conf")
+        end
+    },
+
+    {
+        "github/copilot.vim",
+        event = "InsertEnter",
+        init = function()
+            vim.g.copilot_enabled = false
+        end
+    },
+
+    {
+        "CopilotC-Nvim/CopilotChat.nvim",
+        branch = "main",
+        build = "make tiktoken",
+        cmd = "CopilotChat",
+        keys = {
+            { "<Leader>co", "<cmd>CopilotChat<cr>", desc = "CopilotChat", mode = "n" },
+            { "<Leader>co", "<cmd>CopilotChat<cr>", desc = "CopilotChat", mode = "v" }
+        },
+        dependencies = {
+            "github/copilot.vim",
+            "nvim-lua/plenary.nvim"
+        },
+        opts = require("copilotchat-conf")
+    },
+
+    {
+        "dhruvasagar/vim-table-mode",
+        ft = { "markdown", "text" }
+    },
 
     {
         "NeogitOrg/neogit",
-        dependencies = {
-            "nvim-lua/plenary.nvim", -- required
-            "sindrets/diffview.nvim", -- optional - Diff integration
-            "nvim-telescope/telescope.nvim" -- optional
+        cmd = "Neogit",
+        keys = {
+            { "<Leader>gi", "<cmd>Neogit<cr>", desc = "Neogit" }
         },
-        config = true
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "sindrets/diffview.nvim",
+            "nvim-telescope/telescope.nvim"
+        },
+        config = function()
+            require("neogit-conf")
+        end
     },
 
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
+        event = { "BufReadPost", "BufNewFile" },
         config = function()
-            local configs = require("nvim-treesitter.configs")
-            configs.setup({
-                auto_install = true,
-                ignore_install = {'org'},
-                highlight = {enable = true}
-            })
+            require("treesitter-conf")
         end
     },
 
     {
-        "iurimateus/luasnip-latex-snippets.nvim",
+        "Vigemus/iron.nvim",
+        cmd = { "IronRepl", "IronRestart", "IronFocus", "IronHide" },
+        keys = {
+            { "<space>rs", "<cmd>IronRepl<cr>", desc = "Iron REPL" },
+            { "<space>rr", "<cmd>IronRestart<cr>", desc = "Iron Restart" },
+            { "<space>rf", "<cmd>IronFocus<cr>", desc = "Iron Focus" },
+            { "<space>rh", "<cmd>IronHide<cr>", desc = "Iron Hide" }
+        },
         config = function()
-            require('luasnip-latex-snippets').setup({
-                use_treesitter = true,
-                allow_on_markdown = true,
-            })
-            require("luasnip").config.setup({enable_autosnippets = true})
+            require("iron-conf")
         end
     },
 
-    'Vigemus/iron.nvim',
-
     {
-        'numToStr/Comment.nvim',
-        config = function() require('Comment').setup() end
+        "numToStr/Comment.nvim",
+        event = "VeryLazy",
+        config = function()
+            require("comment-conf")
+        end
     },
 
     {
@@ -158,24 +248,8 @@ require("lazy").setup({
     },
 
     {
-        "CopilotC-Nvim/CopilotChat.nvim",
-        branch = "main",
-        dependencies = {
-            {"github/copilot.vim"}, -- or github/copilot.vim
-            {"nvim-lua/plenary.nvim"} -- for curl, log wrapper
-        },
-        build = "make tiktoken", -- Only on MacOS or Linux
-        opts = {
-            debug = true, -- Enable debugging
-            -- See Configuration section for rest
-            window = {layout = 'vertical'}
-        }
-        -- See Commands section for default commands if you want to lazy load on them
-    },
-
-    {
         "folke/trouble.nvim",
-        opts = {}, -- for default options, refer to the configuration section for custom setup.
+        opts = {},
         cmd = "Trouble",
         keys = {
             {
@@ -206,86 +280,84 @@ require("lazy").setup({
         }
     },
 
-    "mfussenegger/nvim-dap",
     {
-        "rcarriga/nvim-dap-ui",
+        "mfussenegger/nvim-dap",
         dependencies = {
-            "mfussenegger/nvim-dap",
+            "rcarriga/nvim-dap-ui",
             "nvim-neotest/nvim-nio"
-        }
+        },
+        keys = {
+            { "<F5>", function() require("dap").continue() end, desc = "DAP Continue" },
+            { "<F10>", function() require("dap").step_over() end, desc = "DAP Step Over" },
+            { "<F11>", function() require("dap").step_into() end, desc = "DAP Step Into" },
+            { "<F12>", function() require("dap").step_out() end, desc = "DAP Step Out" },
+            { "<Leader>b", function() require("dap").toggle_breakpoint() end, desc = "DAP Toggle Breakpoint" },
+            { "<Leader>B", function() require("dap").set_breakpoint() end, desc = "DAP Set Breakpoint" },
+            { "<Leader>lp", function()
+                require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))
+            end, desc = "DAP Log Point" },
+            { "<Leader>dr", function() require("dap").repl.open() end, desc = "DAP REPL" },
+            { "<Leader>dl", function() require("dap").run_last() end, desc = "DAP Run Last" },
+            { "<Leader>da", function() require("dapui").toggle() end, desc = "DAP UI Toggle" }
+        },
+        config = function()
+            require("dap-conf")
+        end
     },
 
     {
         "keaising/im-select.nvim",
+        event = "InsertEnter",
         config = function()
-            require("im_select").setup({})
-        end,
+            require("im-select-conf")
+        end
     },
 
     {
-        'MeanderingProgrammer/render-markdown.nvim',
-        ft = { 'markdown' },
+        "MeanderingProgrammer/render-markdown.nvim",
+        ft = { "markdown" },
+        config = function()
+            require("render-markdow-conf")
+        end
     },
 
     {
         "HakonHarnes/img-clip.nvim",
         event = "VeryLazy",
-        opts = {},
+        opts = require("img-clip-conf"),
         keys = {
-            { "<leader>pi", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
-        },
-    },
-
-    {
-        "3rd/image.nvim",
-        build = false, -- so that it doesn't build the rock https://github.com/3rd/image.nvim/issues/91#issuecomment-2453430239
-        opts = {
-            backend = "kitty",
-            processor = "magick_cli",
+            { "<leader>pi", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" }
         }
     },
 
     {
+        "3rd/image.nvim",
+        event = "VeryLazy",
+        build = false,
+        opts = require("image-conf")
+    },
+
+    {
         "goolord/alpha-nvim",
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        event = "VimEnter",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = function()
+            require("alpha-conf")
+        end
     },
 
     {
         "lervag/vimtex",
-        lazy = false,     -- we don't want to lazy load VimTeX
-        -- tag = "v2.15", -- uncomment to pin to a specific release
+        ft = { "tex", "plaintex", "latex", "bib" },
         init = function()
-        -- VimTeX configuration goes here, e.g.
-         vim.g.vimtex_view_method = "zathura"
-     end
-    },
-    {
-        "L3MON4D3/LuaSnip",
-        event = "VeryLazy",
-        config = function()
-        local ls = require("luasnip")
-        require("luasnip.loaders.from_lua").lazy_load({
-            paths = { vim.fn.stdpath("config") .. "/luasnip" },
-        })
-    end
+            require("vimtex")
+        end
     },
 
     {
         "chomosuke/typst-preview.nvim",
         ft = "typst",
         version = "1.*",
-        opts = {
-            debug = true, 
-            port = 56051,
-            open_cmd = "open %s",
-            -- If you use kitty and want a dedicated window, uncomment and tweak:
-            -- open_cmd = "kitten @ --to unix:/tmp/mykitty launch --type window --title TypstPreview --dont-take-focus awrit %s",
-            extra_args = { "--input=preview=true" },
-            get_root = function(_)
-                -- Use the buffer's directory as project root so relative resources resolve
-                return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
-            end,        
-        },
-    },
-
+        opts = require("typst-preview-conf")
+    }
 })

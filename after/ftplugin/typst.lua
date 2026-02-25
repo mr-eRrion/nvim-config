@@ -11,3 +11,6 @@ end
 vim.api.nvim_create_user_command("TypstBuild", function()
   tb.build_current({ out = vim.b.typst_output or "" })
 end, {})
+
+-- Buffer-local mapping to trigger a build
+vim.keymap.set("n", "<leader>tb", "<cmd>TypstBuild<CR>", { buffer = true, silent = true, desc = "Typst Build" })

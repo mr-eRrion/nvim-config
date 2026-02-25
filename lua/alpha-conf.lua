@@ -20,9 +20,14 @@ dashboard.button( "l", "󰒲   Lazy", ":Lazy <CR>"),
 dashboard.button( "p", "  Project" , ":Telescope project <CR>"),
 dashboard.button( "q", "󰅚  Quit NVIM" , ":qa<CR>"),
 }
-local handle = io.popen('fortune')
-local fortune = handle:read("*a")
-handle:close()
+local fortune = ""
+if vim.fn.executable('fortune') == 1 then
+  local ok, handle = pcall(io.popen, 'fortune')
+  if ok and handle then
+    fortune = handle:read("*a") or ""
+    handle:close()
+  end
+end
 dashboard.section.footer.val = fortune
 
 dashboard.config.opts.noautocmd = true
