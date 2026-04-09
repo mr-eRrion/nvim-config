@@ -1,5 +1,8 @@
 # Neovim 配置说明书
 
+快速入口：
+- 详细使用指南：`usage.md`
+
 这是我的个人 Neovim 配置，基于 `lazy.nvim` 管理插件，偏向科研写作与开发混用：Typst / LaTeX、调试、格式化、Git、Telescope 与一组常用编辑增强。
 
 ---
@@ -53,7 +56,7 @@
 - `nvim-tree`：文件树
 - `bufferline`：标签页样式
 - `lualine`：状态栏
-- `tokyonight`：主题
+- `catppuccin`：主题
 - `alpha-nvim`：启动页
 - `which-key`：键位提示
 
